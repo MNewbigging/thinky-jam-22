@@ -24,6 +24,7 @@ export class AppState {
   playerMoves: PlayerMove[] = [];
   focusedMoveCell: number | undefined = undefined;
   gamePhase: GamePhase | undefined = undefined;
+  takingMove: number | undefined = undefined;
 
   private keyboardListener = new KeyboardListener();
 
@@ -39,6 +40,8 @@ export class AppState {
       selectMove: action,
       gamePhase: observable,
       canTakeAction: computed,
+      actionPhase: action,
+      takingMove: observable,
     });
 
     this.keyboardListener.on('escape', this.onEscape);
@@ -107,19 +110,36 @@ export class AppState {
   }
 
   readyToMove() {
-    this.actionPhase();
+    this.onEscape();
+
+    this.actionPhase(0);
   }
 
-  actionPhase() {
+  async actionPhase(moveIndex: number) {
+    // Now taking this move
+    this.takingMove = moveIndex;
+    console.log('taking move now', this.takingMove);
+
     // First, player takes their first move
-    this.takePlayerMove(0);
+    this.takePlayerMove(moveIndex);
+
+    // Let the animation play out
+    await this.sleep(500);
 
     // Then the overseer does his thing
+    this.takeOverseerMove(moveIndex);
+
+    // Let the animation play out
+    await this.sleep(200);
+
+    // Call this again if there are more moves to take
+    if (moveIndex < 4) {
+      this.actionPhase(moveIndex + 1);
+    }
   }
 
   takePlayerMove(moveIndex: number) {
     const move = this.playerMoves[moveIndex];
-
     switch (move) {
       case PlayerMove.UP:
         // Make sure there is a cell above to move to
@@ -147,4 +167,10 @@ export class AppState {
         break;
     }
   }
+
+  private sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  takeOverseerMove(moveIndex: number) {}
 }

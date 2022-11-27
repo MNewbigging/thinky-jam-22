@@ -10,19 +10,27 @@ export interface OverseerCompProps {
 }
 
 export const OverseerComp: React.FC<OverseerCompProps> = observer(({ appState }) => {
+  const seqCells: JSX.Element[] = [];
+
+  appState.overseerSequence.forEach((seqNo, idx) => {
+    // Set css classes for each cell
+    const actionClass = appState.takingMove === idx ? 'action' : '';
+    const classes = ['sequence-grid-cell', actionClass];
+
+    seqCells.push(
+      <div key={`seq-${idx}`} className={classes.join(' ')}>
+        {seqNo}
+      </div>
+    );
+  });
+
   return (
     <div className='overseer-comp'>
       <div>Overseer: Idle</div>
 
       <div className='sequence-container'>
         <div>Sequence:</div>
-        <div className='sequence-grid'>
-          {appState.overseerSequence.map((seqNo, idx) => (
-            <div key={`seq-${idx}`} className='sequence-grid-cell'>
-              {seqNo}
-            </div>
-          ))}
-        </div>
+        <div className='sequence-grid'>{seqCells}</div>
       </div>
     </div>
   );
