@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite';
 
 import { AppState } from './AppState';
 import { GameGridComp } from './game-grid-comp/GameGridComp';
+import { MoveInputsComp } from './move-inputs-comp/MoveInputsComp';
 import { MovesComp } from './moves-comp/MovesComp';
 import { OverseerComp } from './overseer-comp/OverseerComp';
 import { PlayerComp } from './player-comp/PlayerComp';
@@ -18,6 +19,7 @@ export const App: React.FC<AppProps> = observer(({ appState }) => {
     <div className='app'>
       <OverseerComp appState={appState} />
       <MovesComp appState={appState} />
+      <MoveInputsComp appState={appState} />
 
       <div className='grid-container'>
         <GameGridComp appState={appState} />

@@ -12,19 +12,19 @@ export interface MovesCompProps {
 export const MovesComp: React.FC<MovesCompProps> = observer(({ appState }) => {
   const moveCells: JSX.Element[] = [];
 
-  for (let i = 0; i < 5; i++) {
+  appState.playerMoves.forEach((move, idx) => {
     // Set css classes for this move cell
-    const focusedClass = appState.focusedMoveCell === i ? 'focus' : '';
+    const focusedClass = appState.focusedMoveCell === idx ? 'focus' : '';
     const classes = ['moves-grid-cell', focusedClass];
 
     moveCells.push(
       <div
-        key={`move-cell-${i}`}
+        key={`move-cell-${idx}`}
         className={classes.join(' ')}
-        onClick={() => appState.focusMoveCell(i)}
+        onClick={() => appState.focusMoveCell(idx)}
       ></div>
     );
-  }
+  });
 
   return (
     <div className='moves-comp'>

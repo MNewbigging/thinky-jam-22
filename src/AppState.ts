@@ -9,6 +9,7 @@ export enum PlayerMove {
   DOWN = '⇩',
   LEFT = '⇦',
   NONE = '🚫',
+  EMPTY = '',
 }
 
 export class AppState {
@@ -41,7 +42,7 @@ export class AppState {
     this.generateOverseerSequence();
 
     // Clear player moves
-    this.playerMoves = [];
+    this.resetPlayerMoves();
   }
 
   generateOverseerSequence() {
@@ -53,6 +54,16 @@ export class AppState {
     }
   }
 
+  resetPlayerMoves() {
+    this.playerMoves = [
+      PlayerMove.EMPTY,
+      PlayerMove.EMPTY,
+      PlayerMove.EMPTY,
+      PlayerMove.EMPTY,
+      PlayerMove.EMPTY,
+    ];
+  }
+
   focusMoveCell(cellIndex: number) {
     this.focusedMoveCell = cellIndex;
     console.log('focus move cell', cellIndex);
@@ -61,4 +72,12 @@ export class AppState {
   onEscape = () => {
     this.focusedMoveCell = undefined;
   };
+
+  selectMove(move: PlayerMove) {
+    if (!this.focusedMoveCell) {
+      return;
+    }
+
+    this.playerMoves[this.focusedMoveCell] = move;
+  }
 }
