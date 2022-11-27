@@ -47,4 +47,8 @@ export class GameGrid {
       this.cells.push(row);
     }
   }
+
+  getCellAtPosition(pos: GridPosition) {
+    return this.cells[pos.y][pos.x];
+  }
 }

@@ -31,6 +31,8 @@ export class AppState {
 
   private keyboardListener = new KeyboardListener();
   private readonly turnThreshold = 5;
+  private readonly knockbackSpaces = 2;
+  private goalPosition: GridPosition;
 
   constructor() {
     makeObservable(this, {
@@ -66,7 +68,11 @@ export class AppState {
 
   newGame() {
     this.playerPosition = new GridPosition(0, 1);
+    this.goalPosition = new GridPosition(this.grid.width - 1, 1);
     this.takingPlayerMove = undefined;
+    this.takingOverseerMove = undefined;
+    this.overseerTotal = 0;
+    this.overseerTurning = false;
 
     this.planPhase();
   }
@@ -154,6 +160,9 @@ export class AppState {
     // Call this again if there are more moves to take
     if (moveIndex < 4) {
       this.actionPhase(moveIndex + 1);
+    } else {
+      // This action phase is now done, move to next planning phase
+      this.planPhase();
     }
   }
 
@@ -205,6 +214,17 @@ export class AppState {
       // Turn
       this.overseerTurning = true;
       this.overseerTotal = 0;
+
+      // Did the overseer see the player?
+      const playerCell = this.grid.getCellAtPosition(this.playerPosition);
+      if (!playerCell.cover) {
+        // Player was seen! Move back two spaces
+        this.playerPosition.x -= this.knockbackSpaces;
+        // Ensure this doesn't knock player off grid
+        if (this.playerPosition.x < 0) {
+          this.playerPosition.x = 0;
+        }
+      }
     }
   }
 }
