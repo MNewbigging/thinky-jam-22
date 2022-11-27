@@ -26,8 +26,11 @@ export class AppState {
   gamePhase: GamePhase | undefined = undefined;
   takingPlayerMove: number | undefined = undefined;
   takingOverseerMove: number | undefined = undefined;
+  overseerTotal = 0;
+  overseerTurning = false;
 
   private keyboardListener = new KeyboardListener();
+  private readonly turnThreshold = 5;
 
   constructor() {
     makeObservable(this, {
@@ -46,6 +49,8 @@ export class AppState {
       takingOverseerMove: observable,
       takePlayerMove: action,
       takeOverseerMove: action,
+      overseerTotal: observable,
+      overseerTurning: observable,
     });
 
     this.keyboardListener.on('escape', this.onEscape);
@@ -144,6 +149,7 @@ export class AppState {
 
     // No longer taking overseer move
     this.takingOverseerMove = undefined;
+    this.overseerTurning = false;
 
     // Call this again if there are more moves to take
     if (moveIndex < 4) {
@@ -189,5 +195,16 @@ export class AppState {
 
   takeOverseerMove(moveIndex: number) {
     this.takingOverseerMove = moveIndex;
+
+    // Add the next sequence number to overseer's total
+    const nextAmount = this.overseerSequence[moveIndex];
+    this.overseerTotal += nextAmount;
+
+    // Is it over the turn-threshold?
+    if (this.overseerTotal >= this.turnThreshold) {
+      // Turn
+      this.overseerTurning = true;
+      this.overseerTotal = 0;
+    }
   }
 }

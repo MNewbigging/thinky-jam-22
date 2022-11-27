@@ -26,7 +26,7 @@ export const OverseerComp: React.FC<OverseerCompProps> = observer(({ appState })
 
   return (
     <div className='overseer-comp'>
-      <div>Overseer: Idle</div>
+      <div>Overseer: {appState.overseerTotal}</div>
 
       <div className='sequence-container'>
         <div>Sequence:</div>

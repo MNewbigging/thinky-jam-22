@@ -16,7 +16,8 @@ export const GameGridComp: React.FC<GameGridCompProps> = observer(({ appState })
     row.forEach((cell, cellIdx) => {
       // Set css classes based on cell props
       const coverClass = cell.cover ? 'cover' : '';
-      const classes = ['game-grid-cell', coverClass];
+      const dangerClass = !cell.cover && appState.overseerTurning ? 'danger' : '';
+      const classes = ['game-grid-cell', coverClass, dangerClass];
 
       cells.push(
         <div key={`${rowIdx}-row-${cellIdx}-cell`} className={classes.join(' ')}>
