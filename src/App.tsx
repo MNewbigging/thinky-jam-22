@@ -17,6 +17,8 @@ interface AppProps {
 export const App: React.FC<AppProps> = observer(({ appState }) => {
   return (
     <div className='app'>
+      {appState.gameEnded && <div className='game-over-msg'>GAME OVER!</div>}
+
       <OverseerComp appState={appState} />
       <MovesComp appState={appState} />
 
@@ -31,8 +33,8 @@ export const App: React.FC<AppProps> = observer(({ appState }) => {
       </div>
 
       <div className='grid-container'>
-        <GameGridComp appState={appState} />
-        <PlayerComp appState={appState} />
+        {appState.grid && <GameGridComp appState={appState} />}
+        {appState.grid && <PlayerComp appState={appState} />}
       </div>
     </div>
   );

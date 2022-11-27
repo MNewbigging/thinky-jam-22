@@ -7,10 +7,12 @@ export interface GameGridProps {
 
 export class GameGridCell {
   cover = false;
-  dnager = false;
+  danger = false;
 
   constructor() {
     this.cover = Math.random() < 0.5;
+
+    makeObservable(this, { danger: observable });
   }
 }
 

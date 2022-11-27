@@ -18,7 +18,7 @@ export enum GamePhase {
 }
 
 export class AppState {
-  grid = new GameGrid({ width: 12, height: 3 });
+  grid: GameGrid | undefined = undefined;
   playerPosition = new GridPosition(0, 1);
   overseerSequence: number[] = [];
   playerMoves: PlayerMove[] = [];
@@ -28,15 +28,16 @@ export class AppState {
   takingOverseerMove: number | undefined = undefined;
   overseerTotal = 0;
   overseerTurning = false;
+  gameEnded = false;
 
   private keyboardListener = new KeyboardListener();
   private readonly turnThreshold = 5;
   private readonly knockbackSpaces = 2;
-  private goalPosition: GridPosition;
   private dangerColumn = -1;
 
   constructor() {
     makeObservable(this, {
+      grid: observable,
       playerPosition: observable,
       overseerSequence: observable,
       generateOverseerSequence: action,
@@ -56,6 +57,9 @@ export class AppState {
       overseerTurning: observable,
       newGame: action,
       onEscape: action,
+      nextDangerColumn: action,
+      gameEnded: observable,
+      gameOver: action,
     });
 
     this.keyboardListener.on('escape', this.onEscape);
@@ -70,12 +74,14 @@ export class AppState {
   }
 
   newGame() {
+    this.grid = new GameGrid({ width: 12, height: 3 });
     this.playerPosition = new GridPosition(0, 1);
-    this.goalPosition = new GridPosition(this.grid.width - 1, 1);
     this.takingPlayerMove = undefined;
     this.takingOverseerMove = undefined;
     this.overseerTotal = 0;
     this.overseerTurning = false;
+    this.gameEnded = false;
+    this.dangerColumn = -1;
 
     this.planPhase();
   }
@@ -153,6 +159,11 @@ export class AppState {
     // Then the overseer does his thing
     this.takeOverseerMove(moveIndex);
 
+    // Game might have ended above
+    if (this.gameEnded) {
+      return;
+    }
+
     // Let the animation play out
     await this.sleep(500);
 
@@ -168,6 +179,12 @@ export class AppState {
     } else {
       // This action phase is now done - another column of cells are now dangerous
       this.nextDangerColumn();
+
+      // Did this cover the player?
+      if (this.isPlayerOnDangerCell()) {
+        this.gameOver();
+        return;
+      }
 
       // Move back to planning phase
       this.planPhase();
@@ -235,10 +252,8 @@ export class AppState {
         }
 
         // Did this knock the player back into a danger cell?
-        const newPlayerCell = this.grid.getCellAtPosition(this.playerPosition);
-        if (newPlayerCell.dnager) {
-          // Game over!!
-          console.warn('Game over!!');
+        if (this.isPlayerOnDangerCell()) {
+          this.gameOver();
         }
       }
     }
@@ -248,7 +263,21 @@ export class AppState {
     this.dangerColumn++;
 
     for (let i = 0; i < 3; i++) {
-      this.grid.cells[i][this.dangerColumn].dnager = true;
+      this.grid.cells[i][this.dangerColumn].danger = true;
     }
+  }
+
+  isPlayerOnDangerCell() {
+    const playerCell = this.grid.getCellAtPosition(this.playerPosition);
+    if (playerCell.danger) {
+      return true;
+    }
+  }
+
+  gameOver() {
+    console.error('GAME OVER!!');
+
+    // Stop the action phase
+    this.gameEnded = true;
   }
 }
