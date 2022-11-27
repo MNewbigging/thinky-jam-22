@@ -1,3 +1,5 @@
+import { makeObservable, observable } from 'mobx';
+
 export interface GameGridProps {
   width: number;
   height: number;
@@ -12,7 +14,12 @@ export class GameGridCell {
 }
 
 export class GridPosition {
-  constructor(public x = 0, public y = 0) {}
+  constructor(public x = 0, public y = 0) {
+    makeObservable(this, {
+      x: observable,
+      y: observable,
+    });
+  }
 }
 
 export class GameGrid {
