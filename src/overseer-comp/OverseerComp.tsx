@@ -17,8 +17,10 @@ export const OverseerComp: React.FC<OverseerCompProps> = observer(({ appState })
       <div className='sequence-container'>
         <div>Sequence:</div>
         <div className='sequence-grid'>
-          {appState.overseerSequence.map((seqNo) => (
-            <div className='sequence-grid-cell'>{seqNo}</div>
+          {appState.overseerSequence.map((seqNo, idx) => (
+            <div key={`seq-${idx}`} className='sequence-grid-cell'>
+              {seqNo}
+            </div>
           ))}
         </div>
       </div>

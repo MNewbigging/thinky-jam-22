@@ -59,6 +59,6 @@ export class AppState {
   }
 
   onEscape = () => {
-    console.log('onEscape');
+    this.focusedMoveCell = undefined;
   };
 }
