@@ -4,7 +4,6 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 
 import { AppState } from '../AppState';
-import { GameGrid } from '../GameGrid';
 
 export interface GameGridCompProps {
   appState: AppState;
