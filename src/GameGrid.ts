@@ -7,6 +7,7 @@ export interface GameGridProps {
 
 export class GameGridCell {
   cover = false;
+  dnager = false;
 
   constructor() {
     this.cover = Math.random() < 0.5;

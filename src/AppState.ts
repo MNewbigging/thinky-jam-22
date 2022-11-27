@@ -33,6 +33,7 @@ export class AppState {
   private readonly turnThreshold = 5;
   private readonly knockbackSpaces = 2;
   private goalPosition: GridPosition;
+  private dangerColumn = -1;
 
   constructor() {
     makeObservable(this, {
@@ -53,6 +54,8 @@ export class AppState {
       takeOverseerMove: action,
       overseerTotal: observable,
       overseerTurning: observable,
+      newGame: action,
+      onEscape: action,
     });
 
     this.keyboardListener.on('escape', this.onEscape);
@@ -161,7 +164,10 @@ export class AppState {
     if (moveIndex < 4) {
       this.actionPhase(moveIndex + 1);
     } else {
-      // This action phase is now done, move to next planning phase
+      // This action phase is now done - another column of cells are now dangerous
+      this.nextDangerColumn();
+
+      // Move back to planning phase
       this.planPhase();
     }
   }
@@ -220,11 +226,27 @@ export class AppState {
       if (!playerCell.cover) {
         // Player was seen! Move back two spaces
         this.playerPosition.x -= this.knockbackSpaces;
+
         // Ensure this doesn't knock player off grid
         if (this.playerPosition.x < 0) {
           this.playerPosition.x = 0;
         }
+
+        // Did this knock the player back into a danger cell?
+        const newPlayerCell = this.grid.getCellAtPosition(this.playerPosition);
+        if (newPlayerCell.dnager) {
+          // Game over!!
+          console.warn('Game over!!');
+        }
       }
+    }
+  }
+
+  nextDangerColumn() {
+    this.dangerColumn++;
+
+    for (let i = 0; i < 3; i++) {
+      this.grid.cells[i][this.dangerColumn].dnager = true;
     }
   }
 }

@@ -16,9 +16,6 @@ export const MovesComp: React.FC<MovesCompProps> = observer(({ appState }) => {
     // Set css classes for this move cell
     const focusedClass = appState.focusedMoveCell === idx ? 'focus' : '';
     const takingMove = appState.takingPlayerMove === idx ? 'action' : '';
-    if (takingMove === 'action') {
-      console.log(move + ' at ' + idx + ' taking action');
-    }
     const classes = ['moves-grid-cell', focusedClass, takingMove];
 
     moveCells.push(
