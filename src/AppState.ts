@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable } from 'mobx';
+import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 
 import { GameGrid, GridPosition } from './GameGrid';
 import { KeyboardListener } from './KeyboardListener';
@@ -148,7 +148,7 @@ export class AppState {
     await this.sleep(500);
 
     // No longer taking player move
-    this.takingPlayerMove = undefined;
+    runInAction(() => (this.takingPlayerMove = undefined));
 
     // Then the overseer does his thing
     this.takeOverseerMove(moveIndex);
@@ -157,8 +157,10 @@ export class AppState {
     await this.sleep(500);
 
     // No longer taking overseer move
-    this.takingOverseerMove = undefined;
-    this.overseerTurning = false;
+    runInAction(() => {
+      this.takingOverseerMove = undefined;
+      this.overseerTurning = false;
+    });
 
     // Call this again if there are more moves to take
     if (moveIndex < 4) {
