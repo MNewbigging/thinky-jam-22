@@ -24,7 +24,8 @@ export class AppState {
   playerMoves: PlayerMove[] = [];
   focusedMoveCell: number | undefined = undefined;
   gamePhase: GamePhase | undefined = undefined;
-  takingMove: number | undefined = undefined;
+  takingPlayerMove: number | undefined = undefined;
+  takingOverseerMove: number | undefined = undefined;
 
   private keyboardListener = new KeyboardListener();
 
@@ -41,7 +42,10 @@ export class AppState {
       gamePhase: observable,
       canTakeAction: computed,
       actionPhase: action,
-      takingMove: observable,
+      takingPlayerMove: observable,
+      takingOverseerMove: observable,
+      takePlayerMove: action,
+      takeOverseerMove: action,
     });
 
     this.keyboardListener.on('escape', this.onEscape);
@@ -57,6 +61,7 @@ export class AppState {
 
   newGame() {
     this.playerPosition = new GridPosition(0, 1);
+    this.takingPlayerMove = undefined;
 
     this.planPhase();
   }
@@ -98,7 +103,13 @@ export class AppState {
 
   selectMove(move: PlayerMove) {
     if (this.focusedMoveCell === undefined) {
-      return;
+      // Focus on first empty cell
+      const idx = this.playerMoves.findIndex((move) => move === PlayerMove.EMPTY);
+      if (idx < 0) {
+        return;
+      }
+
+      this.focusMoveCell(idx);
     }
 
     this.playerMoves[this.focusedMoveCell] = move;
@@ -116,21 +127,23 @@ export class AppState {
   }
 
   async actionPhase(moveIndex: number) {
-    // Now taking this move
-    this.takingMove = moveIndex;
-    console.log('taking move now', this.takingMove);
-
     // First, player takes their first move
     this.takePlayerMove(moveIndex);
 
     // Let the animation play out
     await this.sleep(500);
 
+    // No longer taking player move
+    this.takingPlayerMove = undefined;
+
     // Then the overseer does his thing
     this.takeOverseerMove(moveIndex);
 
     // Let the animation play out
-    await this.sleep(200);
+    await this.sleep(500);
+
+    // No longer taking overseer move
+    this.takingOverseerMove = undefined;
 
     // Call this again if there are more moves to take
     if (moveIndex < 4) {
@@ -139,6 +152,8 @@ export class AppState {
   }
 
   takePlayerMove(moveIndex: number) {
+    this.takingPlayerMove = moveIndex;
+
     const move = this.playerMoves[moveIndex];
     switch (move) {
       case PlayerMove.UP:
@@ -172,5 +187,7 @@ export class AppState {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  takeOverseerMove(moveIndex: number) {}
+  takeOverseerMove(moveIndex: number) {
+    this.takingOverseerMove = moveIndex;
+  }
 }

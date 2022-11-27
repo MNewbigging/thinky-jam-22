@@ -14,7 +14,7 @@ export const OverseerComp: React.FC<OverseerCompProps> = observer(({ appState })
 
   appState.overseerSequence.forEach((seqNo, idx) => {
     // Set css classes for each cell
-    const actionClass = appState.takingMove === idx ? 'action' : '';
+    const actionClass = appState.takingOverseerMove === idx ? 'action' : '';
     const classes = ['sequence-grid-cell', actionClass];
 
     seqCells.push(

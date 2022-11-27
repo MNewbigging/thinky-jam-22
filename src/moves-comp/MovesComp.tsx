@@ -15,7 +15,7 @@ export const MovesComp: React.FC<MovesCompProps> = observer(({ appState }) => {
   appState.playerMoves.forEach((move, idx) => {
     // Set css classes for this move cell
     const focusedClass = appState.focusedMoveCell === idx ? 'focus' : '';
-    const takingMove = appState.takingMove === idx ? 'action' : '';
+    const takingMove = appState.takingPlayerMove === idx ? 'action' : '';
     if (takingMove === 'action') {
       console.log(move + ' at ' + idx + ' taking action');
     }
