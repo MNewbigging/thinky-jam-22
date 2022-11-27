@@ -22,7 +22,9 @@ export const MovesComp: React.FC<MovesCompProps> = observer(({ appState }) => {
         key={`move-cell-${idx}`}
         className={classes.join(' ')}
         onClick={() => appState.focusMoveCell(idx)}
-      ></div>
+      >
+        {move}
+      </div>
     );
   });
 

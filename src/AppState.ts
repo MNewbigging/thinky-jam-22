@@ -30,6 +30,7 @@ export class AppState {
       setupTurn: action,
       focusMoveCell: action,
       focusedMoveCell: observable,
+      selectMove: action,
     });
 
     this.keyboardListener.on('escape', this.onEscape);
@@ -74,7 +75,7 @@ export class AppState {
   };
 
   selectMove(move: PlayerMove) {
-    if (!this.focusedMoveCell) {
+    if (this.focusedMoveCell === undefined) {
       return;
     }
 
