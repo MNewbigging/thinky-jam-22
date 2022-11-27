@@ -1,16 +1,14 @@
 import { action, makeObservable, observable } from 'mobx';
 
+import { GameGrid, GridPosition } from './GameGrid';
+
 export class AppState {
-  public count = 0;
+  grid = new GameGrid({ width: 12, height: 3 });
+  playerPosition = new GridPosition(0, 0);
 
   constructor() {
     makeObservable(this, {
-      count: observable,
-      incrementCount: action,
+      playerPosition: observable,
     });
   }
-
-  public incrementCount = () => {
-    this.count++;
-  };
 }
