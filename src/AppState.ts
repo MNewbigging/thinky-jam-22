@@ -1,4 +1,4 @@
-import { action, makeObservable, observable } from 'mobx';
+import { action, computed, makeObservable, observable } from 'mobx';
 
 import { GameGrid, GridPosition } from './GameGrid';
 import { KeyboardListener } from './KeyboardListener';
@@ -12,12 +12,18 @@ export enum PlayerMove {
   EMPTY = '',
 }
 
+export enum GamePhase {
+  PLAN = 'plan',
+  ACTION = 'action',
+}
+
 export class AppState {
   grid = new GameGrid({ width: 12, height: 3 });
   playerPosition = new GridPosition(0, 1);
   overseerSequence: number[] = [];
   playerMoves: PlayerMove[] = [];
   focusedMoveCell: number | undefined = undefined;
+  gamePhase: GamePhase | undefined = undefined;
 
   private keyboardListener = new KeyboardListener();
 
@@ -27,18 +33,36 @@ export class AppState {
       overseerSequence: observable,
       generateOverseerSequence: action,
       playerMoves: observable,
-      setupTurn: action,
+      planPhase: action,
       focusMoveCell: action,
       focusedMoveCell: observable,
       selectMove: action,
+      gamePhase: observable,
+      canTakeAction: computed,
     });
 
     this.keyboardListener.on('escape', this.onEscape);
-
-    this.setupTurn();
   }
 
-  setupTurn() {
+  get canTakeAction() {
+    if (!this.playerMoves.length) {
+      return false;
+    }
+
+    const can = this.playerMoves.every((move) => move !== PlayerMove.EMPTY);
+
+    console.log('can', can);
+
+    return can;
+  }
+
+  newGame() {
+    this.playerPosition = new GridPosition(0, 1);
+
+    this.planPhase();
+  }
+
+  planPhase() {
     // Get a new overseer number sequence
     this.generateOverseerSequence();
 

@@ -19,7 +19,14 @@ export const App: React.FC<AppProps> = observer(({ appState }) => {
     <div className='app'>
       <OverseerComp appState={appState} />
       <MovesComp appState={appState} />
-      <MoveInputsComp appState={appState} />
+
+      <div className='inputs-row'>
+        <button className='button' onClick={() => appState.newGame()}>
+          New Game
+        </button>
+        <MoveInputsComp appState={appState} />
+        <button disabled={appState.canTakeAction}>Ready to move</button>
+      </div>
 
       <div className='grid-container'>
         <GameGridComp appState={appState} />
