@@ -1,13 +1,14 @@
 import { action, makeObservable, observable } from 'mobx';
 
 import { GameGrid, GridPosition } from './GameGrid';
+import { KeyboardListener } from './KeyboardListener';
 
 export enum PlayerMove {
-  UP = 'move-up',
-  RIGHT = 'move-right',
-  DOWN = 'move-down',
-  LEFT = 'move-left',
-  NONE = 'move-none',
+  UP = '⇧',
+  RIGHT = '⇨',
+  DOWN = '⇩',
+  LEFT = '⇦',
+  NONE = '🚫',
 }
 
 export class AppState {
@@ -15,6 +16,9 @@ export class AppState {
   playerPosition = new GridPosition(0, 1);
   overseerSequence: number[] = [];
   playerMoves: PlayerMove[] = [];
+  focusedMoveCell: number | undefined = undefined;
+
+  private keyboardListener = new KeyboardListener();
 
   constructor() {
     makeObservable(this, {
@@ -23,7 +27,11 @@ export class AppState {
       generateOverseerSequence: action,
       playerMoves: observable,
       setupTurn: action,
+      focusMoveCell: action,
+      focusedMoveCell: observable,
     });
+
+    this.keyboardListener.on('escape', this.onEscape);
 
     this.setupTurn();
   }
@@ -44,4 +52,13 @@ export class AppState {
       this.overseerSequence.push(num);
     }
   }
+
+  focusMoveCell(cellIndex: number) {
+    this.focusedMoveCell = cellIndex;
+    console.log('focus move cell', cellIndex);
+  }
+
+  onEscape = () => {
+    console.log('onEscape');
+  };
 }
