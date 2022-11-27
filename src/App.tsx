@@ -25,7 +25,9 @@ export const App: React.FC<AppProps> = observer(({ appState }) => {
           New Game
         </button>
         <MoveInputsComp appState={appState} />
-        <button disabled={appState.canTakeAction}>Ready to move</button>
+        <button disabled={!appState.canTakeAction} onClick={() => appState.readyToMove()}>
+          Ready to move
+        </button>
       </div>
 
       <div className='grid-container'>

@@ -49,11 +49,7 @@ export class AppState {
       return false;
     }
 
-    const can = this.playerMoves.every((move) => move !== PlayerMove.EMPTY);
-
-    console.log('can', can);
-
-    return can;
+    return this.playerMoves.every((move) => move !== PlayerMove.EMPTY);
   }
 
   newGame() {
@@ -91,7 +87,6 @@ export class AppState {
 
   focusMoveCell(cellIndex: number) {
     this.focusedMoveCell = cellIndex;
-    console.log('focus move cell', cellIndex);
   }
 
   onEscape = () => {
@@ -104,5 +99,52 @@ export class AppState {
     }
 
     this.playerMoves[this.focusedMoveCell] = move;
+
+    // Auto select next move cell
+    if (this.focusedMoveCell + 1 < this.playerMoves.length) {
+      this.focusedMoveCell++;
+    }
+  }
+
+  readyToMove() {
+    this.actionPhase();
+  }
+
+  actionPhase() {
+    // First, player takes their first move
+    this.takePlayerMove(0);
+
+    // Then the overseer does his thing
+  }
+
+  takePlayerMove(moveIndex: number) {
+    const move = this.playerMoves[moveIndex];
+
+    switch (move) {
+      case PlayerMove.UP:
+        // Make sure there is a cell above to move to
+        if (this.playerPosition.y > 0) {
+          this.playerPosition.y--;
+        }
+        break;
+      case PlayerMove.RIGHT:
+        if (this.playerPosition.x < this.grid.width) {
+          this.playerPosition.x++;
+        }
+        break;
+      case PlayerMove.DOWN:
+        if (this.playerPosition.y < this.grid.height) {
+          this.playerPosition.y++;
+        }
+        break;
+      case PlayerMove.LEFT:
+        if (this.playerPosition.x > 0) {
+          this.playerPosition.x--;
+        }
+        break;
+      case PlayerMove.NONE:
+        // Player stays still
+        break;
+    }
   }
 }
