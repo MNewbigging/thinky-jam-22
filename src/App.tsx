@@ -18,6 +18,7 @@ export const App: React.FC<AppProps> = observer(({ appState }) => {
   return (
     <div className='app'>
       {appState.gameEnded && <div className='game-over-msg'>GAME OVER!</div>}
+      <div className='help-msg'>Grey squares provide cover from overseer!</div>
 
       <OverseerComp appState={appState} />
       <MovesComp appState={appState} />

@@ -1,8 +1,8 @@
 {
-  "homepage": "https://your-user-name.github.io/your-repo-name",
-  "name": "base-template",
+  "homepage": "https://mnewbigging.github.io/thinky-jam-22",
+  "name": "thinky-jam",
   "version": "1.0.0",
-  "description": "base project template",
+  "description": "thinky game jam 22 entry",
   "proxy": "http://localhost:8080",
   "main": "index.js",
   "scripts": {
